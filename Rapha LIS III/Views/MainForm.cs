@@ -14,11 +14,12 @@ using System.Windows.Forms;
 namespace Rapha_LIS_III.Views
 {
 
-    public partial class MainForm : MaterialForm
+    public partial class MainForm : MaterialForm, IPatientView
     {
         public MainForm()
         {
             InitializeComponent();
+            AssociateAndRaiseViewEvents();
 
             var materialSkinManager = MaterialSkinManager.Instance;
             materialSkinManager.AddFormToManage(this);
@@ -30,19 +31,49 @@ namespace Rapha_LIS_III.Views
             (Primary)0xC8E6C9,  // Slightly darker green (depth)
             (Accent)0x66BB6A,   // Soft green accent (natural and calming)
             TextShade.BLACK     // Black text for contrast
+            
 );
         }
 
-        private void guna2Button1_Click(object sender, EventArgs e)
+        private void AssociateAndRaiseViewEvents()
         {
-            PatientControlForm patientControlForm = new PatientControlForm();
-            patientControlForm.ShowDialog();
+            btnSearch.Click += delegate { SearchEvent?.Invoke(this, EventArgs.Empty); };
+            txtSearch.KeyDown += (s, e) =>
+            {
+                if (e.KeyCode == Keys.Enter)
+                    SearchEvent?.Invoke(this, EventArgs.Empty);
+            };
         }
 
-        private void guna2Button2_Click(object sender, EventArgs e)
+        public string SearchValue
         {
-            UserControlForm userControlForm = new UserControlForm();
-            userControlForm.ShowDialog();
+            get { return txtSearch.Text; }
+            set { txtSearch.Text = value; }
         }
+        public bool IsEdit { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public bool IsSuccessful { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string Message { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string PatientFirstName { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string patientLastName { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string patientMiddleName { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public int patientAge { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string patientSex { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string patientAddress { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string patientCivilStatus { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string patientReligion { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string patientContact { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string patientTest { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        public event EventHandler SearchEvent;
+        public event EventHandler AddNewEvent;
+        public event EventHandler EditEvent;
+        public event EventHandler DeleteEvent;
+        public event EventHandler SaveEvent;
+
+        public void SetPatienttListBindingSource(BindingSource patientList)
+        {
+            dgvPatients.DataSource = patientList;
+        }
+
     }
 }
